@@ -1,0 +1,8 @@
+{
+ "go": "green",
+ "json": "yellow",
+ "md": "blue",
+ "xml": "green",
+ "yaml": "lightblue",
+ "yml": "lightblue"
+}
