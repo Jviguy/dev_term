@@ -1,13 +1,24 @@
-use dev_term_io::command_io;
+use dev_term_io::{command_io, Executable};
 mod neofetch;
 use neofetch::*;
-
-pub trait Executable {
-    fn execute(&self) -> std::io::Result<()>;
-}
+mod cd;
+use cd::*;
+mod exit;
+use exit::*;
+mod help;
+use help::*;
+mod clear;
+use clear::*;
+mod ls;
+use ls::*;
 
 command_io! {
     enum Command : String {
         Neofetch = "neofetch",
+        Cd = "cd",
+        Exit = "exit",
+        Help = "help",
+        Clear = "clear",
+        Ls = "ls",
     }
 }

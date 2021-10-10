@@ -4,6 +4,7 @@ use std::env::{current_dir};
 use std::io::{stdout, stdin, Write};
 use colored::Colorize;
 use std::process::Command;
+use regex::Regex;
 fn main() -> std::io::Result<()> {
 
     /*
@@ -27,16 +28,31 @@ fn main() -> std::io::Result<()> {
         stdout().flush()?;
         let mut input = String::new();
         stdin().read_line(&mut input)?;
-
-        let mut args = input.trim().split(" ");
+        let regex = Regex::new(r#"(?m)("[^"]+"|[^\s"]+)"#).unwrap();
+        let mut args = regex.find_iter(input.trim());
         let command = crate::commands::Command::read(&mut args);
         if let Ok(inner) = command {
-                inner.execute()?;
-        } else if let Err(e) = command {
-            let args = input.trim().split(" ");
-            let mut win_cmd = Command::new("cmd");
-            win_cmd.arg("/C").args(args);
-            win_cmd.status()?;
+                match inner.execute() {
+                    Ok(_) => (),
+                    Err(e) => {
+                        println!("An error occured while running that command!");
+                        println!("Error: {}", e.to_string())
+                    }
+                }
+        } else if let Err(_e) = command {
+            let mut args = regex.find_iter(input.trim());
+            let mut win_cmd = Command::new(args.next().unwrap().as_str());
+            let mut vec = vec![];
+            for arg in args {
+                vec.push(arg.as_str())
+            }
+            match win_cmd.args(vec).status() {
+                Ok(_) => (),
+                Err(e) => {
+                    println!("An error occured while running that command!");
+                    println!("Error: {}", e.to_string())
+                }
+            }
             //check error type as to determine wether we should closest_match
         }
         /*let name = args[0];

@@ -1,6 +1,6 @@
 use crate::command_io;
 use crate::CommandIo;
-
+use crate::Executable;
 command_io! {
     enum Command : String {
         TestCommand = "test",
@@ -21,8 +21,8 @@ command_io! {
     }
 }
 
-impl TestCommand {
-    pub fn execute(&self) -> std::io::Result<()> {
+impl Executable for TestCommand {
+    fn execute(&self) -> std::io::Result<()> {
         println!("{} {} {}", self.arg1, self.arg2, self.arg3.embed1);
         Ok(())
     }
@@ -30,7 +30,9 @@ impl TestCommand {
 
 #[test]
 fn command() -> std::io::Result<()> {
-    let _cmd = Command::read(&mut "test sex 69 sex".split(" ").into_iter())?;
+    let regex = regex::Regex::new(r#"(?m)("[^"]+"|[^\s"]+)"#).unwrap();
+    let mut args = regex.find_iter("test sex 69 sex");
+    let _cmd = Command::read(&mut args)?;
     Ok(())
 }
 
