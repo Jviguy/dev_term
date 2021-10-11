@@ -11,6 +11,10 @@ mod clear;
 use clear::*;
 mod ls;
 use ls::*;
+mod about;
+use about::*;
+mod ascii;
+use ascii::*;
 
 command_io! {
     enum Command : String {
@@ -20,5 +24,7 @@ command_io! {
         Help = "help",
         Clear = "clear",
         Ls = "ls",
+        About = "about",
+        Ascii = "ascii",
     }
 }

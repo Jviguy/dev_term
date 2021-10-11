@@ -12,3 +12,4 @@ strum_macros = "0.21"
 dev_term_io = { path="io", version = "0.1.0"}
 walkdir = "2"
 regex = "1.5.4"
+figlet-rs = "0.1.3"

@@ -184,7 +184,7 @@ macro_rules! command_io {
                 match self {
                     $(
                         Self::$var(_) => {
-                            let mut s = stringify!($var).to_string();
+                            let mut s = format!("Name: {}", $disc);
                             s.push_str(&*format!("\nDescription: {}\n", <$var>::description()));
                             s.push_str(&*format!("Usage: {}\n", <$var>::usage()));
                             s.push_str(&*format!("Arguments:\n{}", <$var>::args_usage()));

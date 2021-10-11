@@ -5,6 +5,30 @@ use std::io::{stdout, stdin, Write};
 use colored::Colorize;
 use std::process::Command;
 use regex::Regex;
+
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
+const ASCII: &'static str =             r#"           
+                                                 ,----,                                  
+                                               ,/   .`|                                  
+    ,---,                                    ,`   .'  :                           ____   
+  .'  .' `\                                ;    ;     /                         ,'  , `. 
+,---.'     \                             .'___,/    ,'           __  ,-.     ,-+-,.' _ | 
+|   |  .`\  |               .---.        |    :     |          ,' ,'/ /|  ,-+-. ;   , || 
+:   : |  '  |   ,---.     /.  ./|        ;    |.';  ;   ,---.  '  | |' | ,--.'|'   |  || 
+|   ' '  ;  :  /     \  .-' . ' |        `----'  |  |  /     \ |  |   ,'|   |  ,', |  |, 
+'   | ;  .  | /    /  |/___/ \: |            '   :  ; /    /  |'  :  /  |   | /  | |--'  
+|   | :  |  '.    ' / |.   \  ' .            |   |  '.    ' / ||  | '   |   : |  | ,     
+'   : | /  ; '   ;   /| \   \   '            '   :  |'   ;   /|;  : |   |   : |  |/      
+|   | '` ,/  '   |  / |  \   \               ;   |.' '   |  / ||  , ;   |   | |`-'       
+;   :  .'    |   :    |   \   \ |            '---'   |   :    | ---'    |   ;/           
+|   ,.'       \   \  /     '---"                      \   \  /          '---'            
+'---'          `----'                                  `----'                            
+                                                                                         
+
+            "#;
+
+
 fn main() -> std::io::Result<()> {
 
     /*
@@ -21,14 +45,17 @@ fn main() -> std::io::Result<()> {
             |    Welcome to Dev Term   |
             |  ,-------------------------
             \\_/________________________/ ".green());
+    let regex = Regex::new(r#"(?m)("[^"]+"|[^\s"]+)"#).unwrap();
     loop {
         let wd = current_dir()?;
         print!("[{}] ➜ ", wd.display().to_string().as_str().blue());
-
         stdout().flush()?;
         let mut input = String::new();
         stdin().read_line(&mut input)?;
-        let regex = Regex::new(r#"(?m)("[^"]+"|[^\s"]+)"#).unwrap();
+        if input.starts_with("./") || input.starts_with(".\\") {
+            exec_os_command(&regex, input);
+            continue;
+        }
         let mut args = regex.find_iter(input.trim());
         let command = crate::commands::Command::read(&mut args);
         if let Ok(inner) = command {
@@ -40,20 +67,7 @@ fn main() -> std::io::Result<()> {
                     }
                 }
         } else if let Err(_e) = command {
-            let mut args = regex.find_iter(input.trim());
-            let mut win_cmd = Command::new(args.next().unwrap().as_str());
-            let mut vec = vec![];
-            for arg in args {
-                vec.push(arg.as_str())
-            }
-            match win_cmd.args(vec).status() {
-                Ok(_) => (),
-                Err(e) => {
-                    println!("An error occured while running that command!");
-                    println!("Error: {}", e.to_string())
-                }
-            }
-            //check error type as to determine wether we should closest_match
+            exec_os_command(&regex, input)
         }
         /*let name = args[0];
         match command {
@@ -72,5 +86,27 @@ fn main() -> std::io::Result<()> {
             }
         }*/
 
+    }
+}
+
+fn exec_os_command(regex: &regex::Regex, input: String) {
+    let mut args = regex.find_iter(input.trim());
+    match args.next() {
+        //check error type as to determine wether we should closest_match
+        Some(name) => {
+            let mut win_cmd = Command::new(name.as_str());
+            let mut vec = vec![];
+            for arg in args {
+                vec.push(arg.as_str())
+            }
+            match win_cmd.args(vec).status() {
+                Ok(_) => (),
+                Err(e) => {
+                    println!("An error occured while running that command!");
+                    println!("Error: {}", e.to_string())
+                }
+            }
+        },
+        None => (),
     }
 }
