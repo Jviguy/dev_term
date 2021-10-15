@@ -2,8 +2,6 @@ use dev_term_io::command_io;
 use dev_term_io::Executable;
 use colored::Colorize;
 
-
-
 command_io! {
     struct About: "Provides information about your dev_term and your pc!", "about" {}
 }

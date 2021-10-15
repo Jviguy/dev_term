@@ -2,7 +2,6 @@ use dev_term_io::command_io;
 use dev_term_io::Executable;
 use figlet_rs::FIGfont;
 
-
 command_io! {
     struct Ascii: "Generates ASCII art from a given string!", "ascii \"Dev Term\"" {
         pub ascii: String, "The given text to be made into ASCII art",
