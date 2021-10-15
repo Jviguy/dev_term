@@ -30,16 +30,6 @@ const ASCII: &'static str =             r#"
 
 
 fn main() -> std::io::Result<()> {
-
-    /*
-    cmdMap.RegisterCommand("os", commands.Os{})
-    cmdMap.RegisterCommand("cd", commands.Cd{})
-    cmdMap.RegisterCommand("download", commands.Download{})
-    cmdMap.RegisterCommand("echo", commands.Echo{})
-    cmdMap.RegisterCommand("ls", commands.Ls{FileColors: cfg.FileColors})
-    cmdMap.RegisterCommand("exec", commands.Exec{})
-    */
-
     println!("{}", "         / \\---------------------------,
          \\_,|                          |
             |    Welcome to Dev Term   |
@@ -62,37 +52,20 @@ fn main() -> std::io::Result<()> {
                 match inner.execute() {
                     Ok(_) => (),
                     Err(e) => {
-                        println!("An error occured while running that command!");
+                        println!("An error occurred while running that command!");
                         println!("Error: {}", e.to_string())
                     }
                 }
         } else if let Err(_e) = command {
             exec_os_command(&regex, input)
         }
-        /*let name = args[0];
-        match command {
-            None => {
-                let closest = command_map.closest_match(name);
-                if closest == None {
-                    let mut win_cmd = Command::new("cmd");
-                    win_cmd.arg("/C").args(args);
-                    win_cmd.status()?;
-                } else {
-                    println!("Unknown command {}, did you mean: {}?", name, closest.unwrap());
-                }
-            }
-            _ => {
-                // command.unwrap().execute(); todo
-            }
-        }*/
-
     }
 }
 
 fn exec_os_command(regex: &regex::Regex, input: String) {
     let mut args = regex.find_iter(input.trim());
     match args.next() {
-        //check error type as to determine wether we should closest_match
+        //check error type as to determine whether we should closest_match
         Some(name) => {
             let mut win_cmd = Command::new(name.as_str());
             let mut vec = vec![];
@@ -102,7 +75,7 @@ fn exec_os_command(regex: &regex::Regex, input: String) {
             match win_cmd.args(vec).status() {
                 Ok(_) => (),
                 Err(e) => {
-                    println!("An error occured while running that command!");
+                    println!("An error occurred while running that command!");
                     println!("Error: {}", e.to_string())
                 }
             }

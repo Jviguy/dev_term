@@ -19,10 +19,8 @@ impl CommandIo for bool {
 
     fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self>{
         Ok(match iter.next().unwrap().as_str() {
-            "true" => true,
-            "false" => false,
-            "0" => false,
-            "1" => true,
+            "true" | "1" => true,
+            "false" | "0" => false,
             _ => {
                 return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Invalid boolean in command!"));
             }
