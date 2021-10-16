@@ -202,6 +202,14 @@ macro_rules! command_io {
                     _ =>  Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Unknown command!")),
                 }
             }
+
+            fn get_all() -> Vec<Self> {
+                vec![
+                    $(
+                        Self::$var($var::default()),
+                    )*
+                ]
+            }
         }
 
         impl crate::CommandIo for $ident {
