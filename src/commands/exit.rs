@@ -2,7 +2,7 @@ use dev_term_io::command_io;
 use dev_term_io::Executable;
 
 command_io! {
-    struct Exit : "exits the current instance of dev_term", "exit" {
+    struct Exit : "Exits the current instance of dev_term", "exit" {
     }
 }
 

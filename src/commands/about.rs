@@ -3,7 +3,7 @@ use dev_term_io::Executable;
 use colored::Colorize;
 
 command_io! {
-    struct About: "Provides information about your dev_term and your pc!", "about" {}
+    struct About: "Provides information about your dev_term and your pc", "about" {}
 }
 
 impl Executable for About {

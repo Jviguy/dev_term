@@ -4,7 +4,7 @@ use walkdir::WalkDir;
 use std::path::PathBuf;
 
 command_io! {
-    struct Ls: "Displays the current files in a directory!", "ls" {
+    struct Ls: "Displays the current files in a directory", "ls" {
         pub path: Option<String>, "the path to inspect!",
         pub flag: Option<String>, "a flag representing what the next param will be!",
         pub depth: Option<u32>, "the depth of recursion that we should inspect!",

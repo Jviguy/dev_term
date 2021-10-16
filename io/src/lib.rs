@@ -14,7 +14,7 @@ pub trait CommandIo: Sized {
 
 impl CommandIo for bool {
     fn write(&self, s: &mut String) {
-        s.push_str(&*self.to_string())          
+        s.push_str(&*self.to_string())
     }
 
     fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self>{
@@ -30,7 +30,7 @@ impl CommandIo for bool {
 
 impl CommandIo for String {
     fn write(&self, s: &mut String) {
-        s.push_str(self.as_str())          
+        s.push_str(self.as_str())
     }
 
     fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self> {
@@ -48,7 +48,7 @@ impl CommandIo for Option<String> {
                 s.push_str(ss.as_str())
             }
             _ => ()
-        }          
+        }
     }
 
     fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self> {
@@ -178,6 +178,30 @@ macro_rules! command_io {
                 }
             }
 
+            pub fn name(&self) -> String {
+                match self {
+                    $(
+                        Self::$var(_) => $disc.to_string(),
+                    )*
+                }
+            }
+
+            pub fn description(&self) -> String {
+                match self {
+                    $(
+                        Self::$var(_) => <$var>::description().to_string(),
+                    )*
+                }
+            }
+
+            pub fn usage(&self) -> String {
+                match self {
+                    $(
+                        Self::$var(_) => <$var>::usage().to_string(),
+                    )*
+                }
+            }
+
             pub fn help(&self) -> std::io::Result<String> {
                 match self {
                     $(
@@ -199,6 +223,14 @@ macro_rules! command_io {
                     )*
                     _ =>  Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Unknown command!")),
                 }
+            }
+
+            fn get_all() -> Vec<Self> {
+                vec![
+                    $(
+                        Self::$var($var::default()),
+                    )*
+                ]
             }
         }
 
