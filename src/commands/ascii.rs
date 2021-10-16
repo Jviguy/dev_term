@@ -3,7 +3,7 @@ use dev_term_io::Executable;
 use figlet_rs::FIGfont;
 
 command_io! {
-    struct Ascii: "Generates ASCII art from a given string!", "ascii \"Dev Term\"" {
+    struct Ascii: "Generates ASCII art from a given string", "ascii <text>" {
         pub ascii: String, "The given text to be made into ASCII art",
         pub font_file: Option<String>, "The file in which a custom font is stored for usage",
     }

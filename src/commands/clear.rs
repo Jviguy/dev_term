@@ -3,7 +3,7 @@ use dev_term_io::Executable;
 use std::process::Command;
 
 command_io! {
-    struct Clear: "Clear the contents of the current terminal!", "clear" {}
+    struct Clear: "Clear the contents of the current terminal", "clear" {}
 }
 
 impl Executable for Clear {
