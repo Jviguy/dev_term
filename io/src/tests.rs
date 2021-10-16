@@ -1,6 +1,7 @@
 use crate::command_io;
 use crate::CommandIo;
 use crate::Executable;
+
 command_io! {
     enum Command : String {
         TestCommand = "test",

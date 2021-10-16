@@ -1,6 +1,7 @@
 use dev_term_io::command_io;
 use dev_term_io::Executable;
 use std::env::set_current_dir;
+
 command_io! {
     struct Cd : "Changes the current working directory!", "cd .." {
         pub path: String, "the given path to change the cw to!",
