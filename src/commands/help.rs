@@ -18,7 +18,7 @@ impl Executable for Help {
                 let command = crate::commands::Command::get_cmd(&mut args);
                 if let Ok(inner) = command {
                     println!("{}", inner.help()?)
-                } else if let Err(_) = command {
+                } else if command.is_err() {
                     println!("That command isn't in dev_term, outputting windows help command!");
                     let mut win_cmd = Command::new("cmd");
                     win_cmd.arg("/C").args(vec!["help", self.command.clone().unwrap().as_str()]);
