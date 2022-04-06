@@ -36,7 +36,7 @@ impl Executable for Ls {
             None => 1,
         };
         for entry in WalkDir::new(&path).max_depth(depth) {
-            println!("{}", entry?.path().display());
+            println!("{}", entry?.file_name().to_str());
         }
         Ok(())
     }
