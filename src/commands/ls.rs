@@ -2,6 +2,7 @@ use dev_term_io::command_io;
 use dev_term_io::Executable;
 use walkdir::WalkDir;
 use std::path::PathBuf;
+
 command_io! {
     struct Ls: "Displays the current files in a directory", "ls" {
         pub path: Option<String>, "the path to inspect!",
