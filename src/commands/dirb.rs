@@ -19,27 +19,21 @@ impl Executable for Dirb {
 
         let client = reqwest::blocking::Client::new();
 
-        let word_list;
-        let mut word_string = String::new();
-        if let Ok(mut response) = client.get(&path).send() {
-            if let Err(e) = response.read_to_string(&mut word_string) {
-                return Err(Error::new(ErrorKind::Other, e));
-            }
-            word_list = word_string.split('\n').collect::<Vec<&str>>();
-        } else {
-            return Err(Error::new(ErrorKind::Other, "Could not get word list"));
-        }
+        let mut word_string= String::new();
+        client.get(&path)
+            .send()
+            .map_err(|_| Error::new(ErrorKind::Other, "Could not get word list"))?
+            .read_to_string(&mut word_string)
+            .map_err(|e| Error::new(ErrorKind::Other, e))?;
+        let word_list = word_string.split('\n').collect::<Vec<&str>>();
 
-        let proxies;
-        let mut contents = String::new();
-        if let Ok(mut response) = client.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5&timeout=10000&country=all").send() {
-            if let Err(e) = response.read_to_string(&mut contents) {
-                return Err(Error::new(ErrorKind::Other, e));
-            }
-            proxies = contents.split('\n').collect::<Vec<&str>>();
-        } else {
-            return Err(Error::new(ErrorKind::Other, "Could not get proxies"));
-        }
+        let mut proxy_string = String::new();
+        client.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5&timeout=10000&country=all")
+            .send()
+            .map_err(|_| Error::new(ErrorKind::Other, "Could not get proxies"))?
+            .read_to_string(&mut proxy_string)
+            .map_err(|e| Error::new(ErrorKind::Other, e))?;
+        let proxies = proxy_string.split('\n').collect::<Vec<&str>>();
 
         let mut rng = rand::thread_rng();
         for i in word_list {
