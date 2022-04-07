@@ -8,7 +8,7 @@ command_io! {
 }
 
 impl Executable for Neofetch {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         println!("todo");
         Ok(())
     }
