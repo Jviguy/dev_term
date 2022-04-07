@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use std::io::{Error, ErrorKind, Read};
+use std::io::Read;
 use dev_term_io::{command_io, Executable};
 use colored::Colorize;
 use rand::Rng;
@@ -12,7 +12,7 @@ command_io! {
 }
 
 impl Executable for Dirb {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         let path = self.word_list.clone().unwrap_or("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt".to_string());
         let line = "─────────────────────────".red();
         println!("{}\n{}: {}\n{}: {}\n{}", line, "Address".yellow(), self.address, "Word List".yellow(), &path, line);
@@ -20,19 +20,11 @@ impl Executable for Dirb {
         let client = reqwest::blocking::Client::new();
 
         let mut word_string= String::new();
-        client.get(&path)
-            .send()
-            .map_err(|_| Error::new(ErrorKind::Other, "Could not get word list"))?
-            .read_to_string(&mut word_string)
-            .map_err(|e| Error::new(ErrorKind::Other, e))?;
+        client.get(&path).send()?.read_to_string(&mut word_string)?;
         let word_list = word_string.split('\n').collect::<Vec<&str>>();
 
         let mut proxy_string = String::new();
-        client.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5&timeout=10000&country=all")
-            .send()
-            .map_err(|_| Error::new(ErrorKind::Other, "Could not get proxies"))?
-            .read_to_string(&mut proxy_string)
-            .map_err(|e| Error::new(ErrorKind::Other, e))?;
+        client.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5&timeout=10000&country=all").send()?.read_to_string(&mut proxy_string)?;
         let proxies = proxy_string.split('\n').collect::<Vec<&str>>();
 
         let mut rng = rand::thread_rng();

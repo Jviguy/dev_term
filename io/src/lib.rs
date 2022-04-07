@@ -1,9 +1,10 @@
 #[cfg(test)]
 mod tests;
-pub type Result<T = (), E = std::io::Error> = std::result::Result<T, E>;
+use anyhow::anyhow;
+pub type Result<T = (), E = anyhow::Error> = std::result::Result<T, E>;
 
 pub trait Executable {
-    fn execute(&self) -> std::io::Result<()>;
+    fn execute(&self) -> anyhow::Result<()>;
 }
 
 pub trait CommandIo: Sized {
@@ -22,7 +23,7 @@ impl CommandIo for bool {
             "true" | "1" => true,
             "false" | "0" => false,
             _ => {
-                return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Invalid boolean in command!"));
+                return Err(anyhow!("Invalid boolean in command!"));
             }
         })
     }
@@ -36,7 +37,7 @@ impl CommandIo for String {
     fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self> {
         match iter.next() {
             Some(s) => Ok(s.as_str().to_string()),
-            None => Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Too little arguments passed!"))
+            None => Err(anyhow!("Too little arguments passed!"))
         }
     }
 }
@@ -69,7 +70,7 @@ macro_rules! impl_primitive {
             fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self> {
                 match iter.next() {
                     Some(s) => Ok(s.as_str().parse::<$ty>().unwrap()),
-                    None => Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Too little arguments passed!"))
+                    None => Err(anyhow!("Too little arguments passed!"))
                 }
             }
         }
@@ -127,7 +128,7 @@ macro_rules! command_io {
                 )*
             }
 
-            fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self, std::io::Error> {
+            fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self, anyhow::Error> {
                 Ok(Self {
                     $(
                         $field: crate::CommandIo::read(iter)?,
@@ -170,7 +171,7 @@ macro_rules! command_io {
 
         #[allow(dead_code)]
         impl $ident {
-            pub fn execute(&self) -> std::io::Result<()> {
+            pub fn execute(&self) -> anyhow::Result<()> {
                 match self {
                     $(
                         Self::$var(value) => value.execute(),
@@ -202,7 +203,7 @@ macro_rules! command_io {
                 }
             }
 
-            pub fn help(&self) -> std::io::Result<String> {
+            pub fn help(&self) -> anyhow::Result<String> {
                 match self {
                     $(
                         Self::$var(_) => {
@@ -216,12 +217,12 @@ macro_rules! command_io {
                 }
             }
 
-            fn get_cmd<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self, std::io::Error> {
+            fn get_cmd<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self, anyhow::Error> {
                 match &*<$disty as crate::CommandIo>::read(iter)? {
                     $(
                         $disc => Ok(Self::$var($var::default())),
                     )*
-                    _ =>  Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Unknown command!")),
+                    _ =>  Err(anyhow!("Unknown command!")),
                 }
             }
 
@@ -246,12 +247,12 @@ macro_rules! command_io {
                 }
             }
 
-            fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self, std::io::Error> {
+            fn read<'a>(iter: &mut impl Iterator<Item = regex::Match<'a>>) -> Result<Self, anyhow::Error> {
                 match &*<$disty as crate::CommandIo>::read(iter)? {
                     $(
                         $disc => Ok(Self::$var(crate::CommandIo::read(iter)?)),
                     )*
-                    _ =>  Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Unknown command!")),
+                    _ =>  Err(anyhow!("Unknown command!")),
                 }
             }
         }

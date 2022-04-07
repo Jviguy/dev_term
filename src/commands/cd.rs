@@ -9,7 +9,7 @@ command_io! {
 }
 
 impl Executable for Cd {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         set_current_dir(&self.path)?;
         Ok(())
     }
