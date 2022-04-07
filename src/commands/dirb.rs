@@ -7,7 +7,7 @@ use rand::Rng;
 command_io! {
     struct Dirb : "Brute-force a web server for directories", "dirb <address> [word list]" {
         pub address: String, "The ip address to do the scan on",
-        pub word_list: Option<String>, "The url to the word list to",
+        pub word_list: Option<String>, "The url to the word list",
     }
 }
 
