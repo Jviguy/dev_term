@@ -7,7 +7,7 @@ use rand::Rng;
 command_io! {
     struct Dirb : "Brute-force a web server for directories", "dirb <address> [word list]" {
         pub address: String, "The ip address to do the scan on",
-        pub word_list: Option<String>, "The path or url to the word list to use",
+        pub word_list: Option<String>, "The url to the word list to",
     }
 }
 
@@ -57,6 +57,7 @@ impl Executable for Dirb {
                 continue;
             }
 
+            // todo: dont assume https
             let url = format!("https://{}/{}", self.address, i);
             let resp = client.unwrap().get(&url).send();
             if resp.is_ok() && resp.unwrap().status().is_success() {
