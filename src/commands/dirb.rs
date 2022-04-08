@@ -15,7 +15,7 @@ impl Executable for Dirb {
     fn execute(&self) -> anyhow::Result<()> {
         let path = self.word_list.clone().unwrap_or("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt".to_string());
         let line = "─────────────────────────".red();
-        println!("{}\n{}: {}\n{}: {}\n{}", line, "Address".yellow(), self.address, "Word List".yellow(), &path, line);
+        println!("{}\n{}: {}\n{}: {}\n{}\n\n\n\n{}", line, "Address".yellow(), self.address, "Word List".yellow(), &path, line, "[-] ~ ".red());
 
         let client = reqwest::blocking::Client::new();
 
@@ -47,9 +47,9 @@ impl Executable for Dirb {
             let url = format!("https://{}/{}", self.address, i);
             let resp = client.unwrap().get(&url).send();
             if resp.is_ok() && resp.unwrap().status().is_success() {
-                println!("{}", url.green());
+                println!("\x1b[2A{}\n\x1b[2K\n{}", url.green(), "[-] ~ ".red());
             } else {
-                println!("{}", url.red());
+                println!("\x1b[1A\r{}{}", "[-] ~ ".red(), url.red());
             }
         }
 
