@@ -28,7 +28,8 @@ impl Executable for Dirb {
         let proxies = proxy_string.split('\n').collect::<Vec<&str>>();
 
         let mut rng = rand::thread_rng();
-        for i in word_list {
+        let total_words = word_list.len();
+        for (k, i) in word_list.iter().enumerate() {
             let proxy = reqwest::Proxy::http(format!("socks5://{}", &proxies[rng.gen_range(0..proxies.len())]));
             if proxy.is_err() {
                 println!("{}: {}", "Failed creating proxy".red(), proxy.err().unwrap());
@@ -46,10 +47,11 @@ impl Executable for Dirb {
             // todo: dont assume https
             let url = format!("https://{}/{}", self.address, i);
             let resp = client.unwrap().get(&url).send();
+            let prefix = format!("{}{}/{}{}", "[".red(), k, total_words, "] ~ ".red());
             if resp.is_ok() && resp.unwrap().status().is_success() {
-                println!("\x1b[2A{}\n\x1b[2K\n{}", url.green(), "[-] ~ ".red());
+                println!("\x1b[2A{}\n\x1b[2K\n{}", url.green(), prefix);
             } else {
-                println!("\x1b[1A\r{}{}", "[-] ~ ".red(), url.red());
+                println!("\x1b[1A\r{}{}", prefix, url.red());
             }
         }
 
