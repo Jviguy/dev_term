@@ -16,6 +16,8 @@ mod about;
 use about::*;
 mod ascii;
 use ascii::*;
+mod dirb;
+use dirb::*;
 
 command_io! {
     enum Command : String {
@@ -27,5 +29,6 @@ command_io! {
         Ls = "ls",
         About = "about",
         Ascii = "ascii",
+        Dirb = "dirb",
     }
 }
