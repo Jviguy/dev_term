@@ -13,14 +13,14 @@ command_io! {
 
 impl Executable for Dirb {
     fn execute(&self) -> anyhow::Result<()> {
-        let path = self.word_list.clone().unwrap_or("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt".to_string());
+        let path = &*self.word_list.clone().unwrap_or("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt".to_string());
         let line = "─────────────────────────".red();
         println!("{}\n{}: {}\n{}: {}\n{}\n\n\n\n{}", line, "Address".yellow(), self.address, "Word List".yellow(), &path, line, "[-] ~ ".red());
 
         let client = reqwest::blocking::Client::new();
 
         let mut word_string= String::new();
-        client.get(&path).send()?.read_to_string(&mut word_string)?;
+        client.get(path).send()?.read_to_string(&mut word_string)?;
         let word_list = word_string.split('\n').collect::<Vec<&str>>();
 
         let mut proxy_string = String::new();
