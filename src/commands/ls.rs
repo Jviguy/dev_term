@@ -1,7 +1,7 @@
 use dev_term_io::command_io;
 use dev_term_io::Executable;
-use walkdir::WalkDir;
 use std::path::PathBuf;
+use walkdir::WalkDir;
 
 command_io! {
     struct Ls: "Displays the current files in a directory", "ls" {
@@ -15,28 +15,37 @@ impl Executable for Ls {
     fn execute(&self) -> std::io::Result<()> {
         let path = match &self.path {
             Some(p) => PathBuf::from(p),
-            None => std::env::current_dir()?
+            None => std::env::current_dir()?,
         };
         let depth = match &self.flag {
-            Some(d) => {
-                match &**d {
-                    "-d" | "--depth" => {
-                        match self.depth {
-                            Some(de) => de as usize,
-                            None => {
-                                return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Expected non negative integer depth!"));
-                            }
-                        }
+            Some(d) => match &**d {
+                "-d" | "--depth" => match self.depth {
+                    Some(de) => de as usize,
+                    None => {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::InvalidInput,
+                            "Expected non negative integer depth!",
+                        ));
                     }
-                    _ => {
-                        return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Expected a valid flag found: {}!", d)));
-                    }
+                },
+                _ => {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected a valid flag found: {}!", d),
+                    ));
                 }
             },
             None => 1,
         };
         for entry in WalkDir::new(&path).max_depth(depth) {
-            println!("{}", entry?.path().strip_prefix(path.as_path().clone()).unwrap().display());
+            println!(
+                "{}",
+                entry?
+                    .path()
+                    .strip_prefix(path.as_path())
+                    .unwrap()
+                    .display()
+            );
         }
         Ok(())
     }
