@@ -1,6 +1,5 @@
 use dev_term_io::command_io;
 use dev_term_io::Executable;
-use walkdir::WalkDir;
 use std::path::PathBuf;
 use anyhow::anyhow;
 
@@ -16,7 +15,7 @@ impl Executable for Ls {
     fn execute(&self) -> anyhow::Result<()> {
         let path = match &self.path {
             Some(p) => PathBuf::from(p),
-            None => std::env::current_dir()?
+            None => std::env::current_dir()?,
         };
         let depth = match &self.flag {
             Some(d) => {
@@ -32,12 +31,25 @@ impl Executable for Ls {
                     _ => {
                         return Err(anyhow!(format!("Expected a valid flag found: {}!", d)));
                     }
+                },
+                _ => {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected a valid flag found: {}!", d),
+                    ));
                 }
             },
             None => 1,
         };
         for entry in WalkDir::new(&path).max_depth(depth) {
-            println!("{}", entry?.path().display());
+            println!(
+                "{}",
+                entry?
+                    .path()
+                    .strip_prefix(path.as_path())
+                    .unwrap()
+                    .display()
+            );
         }
         Ok(())
     }
