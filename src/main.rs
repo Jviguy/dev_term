@@ -60,10 +60,10 @@ fn main() -> Result<()> {
                     Ok(_) => (),
                     Err(e) => {
                         println!("An error occurred while running that command!");
-                        println!("Error: {}", e.to_string())
+                        println!("Error: {}", e)
                     }
                 }
-        } else if let Err(_e) = command {
+        } else if command.is_err() {
             exec_os_command(&regex, input)
         }
     }
@@ -81,7 +81,7 @@ fn exec_os_command(regex: &regex::Regex, input: String) {
             Ok(_) => (),
             Err(e) => {
                 println!("An error occurred while running that command!");
-                println!("Error: {}", e.to_string())
+                println!("Error: {}", e)
             }
         }
     }

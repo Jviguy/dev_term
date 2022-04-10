@@ -7,7 +7,7 @@ command_io! {
 }
 
 impl Executable for About {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         println!("{}", crate::ASCII.green());
         println!("You are running {} of {}", 
             format!("v{}", crate::VERSION).red(),

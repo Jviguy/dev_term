@@ -7,7 +7,7 @@ command_io! {
 }
 
 impl Executable for Clear {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         let mut win_cmd = Command::new("cmd");
         win_cmd.arg("/C").args(vec!["cls"]);
         win_cmd.status()?;

@@ -7,7 +7,7 @@ command_io! {
 }
 
 impl Executable for Exit {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         println!("Goodbye!");
         std::process::exit(0);
     }

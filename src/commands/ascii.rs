@@ -10,7 +10,7 @@ command_io! {
 }
 
 impl Executable for Ascii {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         let font = match &self.font_file {
             Some(path) => {
                 FIGfont::from_file(path.as_str()).unwrap()

@@ -10,7 +10,7 @@ command_io! {
 }
 
 impl Executable for Help {
-    fn execute(&self) -> std::io::Result<()> {
+    fn execute(&self) -> anyhow::Result<()> {
         let regex = regex::Regex::new(r#"(?m)("[^"]+"|[^\s"]+)"#).unwrap();
         match &self.command {
             Some(c) => {
