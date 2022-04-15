@@ -13,7 +13,7 @@ command_io! {
 
 impl Executable for Dirb {
     fn execute(&self) -> anyhow::Result<()> {
-        let path = &*self.word_list.clone().unwrap_or("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt".to_string());
+        let path = &*self.word_list.clone().unwrap_or_else(|| "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt".to_string());
         let line = "─────────────────────────".red();
         println!("{}\n{}: {}\n{}: {}\n{}\n\n\n\n{}", line, "Address".yellow(), self.address, "Word List".yellow(), &path, line, "[-] ~ ".red());
 
