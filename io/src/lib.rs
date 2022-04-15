@@ -3,6 +3,13 @@ mod tests;
 use anyhow::anyhow;
 pub type Result<T = (), E = anyhow::Error> = std::result::Result<T, E>;
 
+// Flag used for representing an argument that is just a -v or -l and requires no value
+// If you require a flag with a value otherwise use Option<T>
+pub struct Flag {
+    // found represents if the given argument was found in the command string.
+    pub found: bool,
+}
+
 pub trait Executable {
     fn execute(&self) -> anyhow::Result<()>;
 }

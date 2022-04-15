@@ -2,6 +2,7 @@ use dev_term_io::command_io;
 use dev_term_io::Executable;
 use std::path::PathBuf;
 use anyhow::anyhow;
+use walkdir::WalkDir;
 
 command_io! {
     struct Ls: "Displays the current files in a directory", "ls" {
@@ -31,12 +32,6 @@ impl Executable for Ls {
                     _ => {
                         return Err(anyhow!(format!("Expected a valid flag found: {}!", d)));
                     }
-                },
-                _ => {
-                    return Err(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected a valid flag found: {}!", d),
-                    ));
                 }
             },
             None => 1,
